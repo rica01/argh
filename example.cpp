@@ -1,32 +1,30 @@
+// MWE for argh.h by Adi Shavit (github.com/adishavit)
+// compile with: g++ example.cpp
+// run with: ./a.out -i III -o OOO -f FFF -v
+
 #include <iostream>
+#include "argh.h"
 
 using namespace std;
 
-#include "argh.h"
-
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
-    argh::parser cmdl;
-    cmdl.parse(argc, argv, argh::parser::PREFER_PARAM_FOR_UNREG_OPTION);
+	argh::parser cmdl;
+	cmdl.parse(argc, argv, argh::parser::PREFER_PARAM_FOR_UNREG_OPTION);
 
-    if (cmdl["-v"])
-        cout << "Verbose, I am." << endl;
+	if (cmdl["-v"]) // check for flags with []
+		cout << "verbose enabled." << endl;
+	string i, o, f;
+	cmdl("-i") >> i; // get values of args with ()
+	cmdl("-o") >> o;
+	cmdl("-f") >> f;
+	cout << "-i:" << i << endl;
+	cout << "-o:" << o << endl;
+	cout << "-f:" << f << endl;
 
-	 cout << "Positional args:\n";
-	 for (auto& pos_arg : cmdl)
-		 cout << '\t' << pos_arg << endl;
+	string na; // not in list!
+	cmdl("-na") >> na; // empty string
+	cout << "-na:" << na << endl;
 
-    cout << "Positional args:\n";
-    for (auto& pos_arg : cmdl.pos_args())
-        cout << '\t' << pos_arg << endl;
-
-    cout << "\nFlags:\n";
-    for (auto& flag : cmdl.flags())
-        cout << '\t' << flag << endl;
-
-    cout << "\nParameters:\n";
-    for (auto& param : cmdl.params())
-        cout << '\t' << param.first << " : " << param.second << endl;
-
-    return EXIT_SUCCESS;
+	return 0;
 }
